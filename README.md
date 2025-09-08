@@ -96,7 +96,7 @@ JDK
  ├── javadoc, jar, jdb, jshell, ...
 ```
 
-## Linux 64-bit installation instructions for Java
+## Linux 64-bit installation instructions for Java or JDK
 
 ### Follow these steps to download and install Java for Linux.
 1. [Download](#download)
