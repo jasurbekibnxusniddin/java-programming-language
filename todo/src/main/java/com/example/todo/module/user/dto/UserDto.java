@@ -2,7 +2,7 @@ package com.example.todo.module.user.dto;
 
 public class UserDto {
 
-    public class SignUp {
+    public static class SignUp {
         private String username;
         private String password;
 
@@ -12,7 +12,7 @@ public class UserDto {
         public void setPassword(String password) { this.password = password; }
     }
 
-    public class Login {
+    public static class Login {
         private String username;
         private String password;
 
@@ -22,7 +22,7 @@ public class UserDto {
         public void setPassword(String password) { this.password = password; }
     }
 
-    public class Update {
+    public static class Update {
         private String username;
         private String password;
 
@@ -32,7 +32,7 @@ public class UserDto {
         public void setPassword(String password) { this.password = password; }
     }
 
-    public class Response {
+    public static class Response {
         private final Long id;
         private final String username;
 
@@ -40,6 +40,7 @@ public class UserDto {
             this.id = id;
             this.username = username;
         }
+        
         public Long getId() { return id; }
         public String getUsername() { return username; }
     }

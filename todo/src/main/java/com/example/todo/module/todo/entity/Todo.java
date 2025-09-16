@@ -5,8 +5,13 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import com.example.todo.module.user.entity.User;
 
 @Entity
+@Table(name = "todos")
 public class Todo {
 
     @Id
@@ -15,6 +20,10 @@ public class Todo {
 
     private String title;
     private boolean completed;
+    
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
     public Todo() {
     }
@@ -22,6 +31,12 @@ public class Todo {
     public Todo(String title, boolean completed) {
         this.title = title;
         this.completed = completed;
+    }
+    
+    public Todo(String title, boolean completed, User user) {
+        this.title = title;
+        this.completed = completed;
+        this.user = user;
     }
 
     public Long getId() {
@@ -42,5 +57,13 @@ public class Todo {
 
     public void setCompleted(boolean completed) {
         this.completed = completed;
+    }
+    
+    public User getUser() {
+        return user;
+    }
+    
+    public void setUser(User user) {
+        this.user = user;
     }
 }
