@@ -1,0 +1,35 @@
+spring:
+  application:
+    name: eureka-server
+  # security:
+  #   user:
+  #     name: user
+  #     password: password
+
+server:
+  port: 8762
+
+eureka:
+  client:
+    register-with-eureka: false
+    fetch-registry: false
+
+logging:
+  level:
+    com.netflix.eureka: OFF
+    com.netflix.discovery: OFF
+
+# server:
+#   port: 8761   # 👈 default port for Eureka dashboard
+
+# spring:
+#   application:
+#     name: service-registry   # 👈 the name of this service
+
+# eureka:
+#   client:
+#     register-with-eureka: false   # 👈 don't register itself
+#     fetch-registry: false         # 👈 don't fetch other services
+#   server:
+#     eviction-interval-timer-in-ms: 5000  # check every 5 seconds
+#     enable-self-preservation: false   # 👈 disable paranoid mode
