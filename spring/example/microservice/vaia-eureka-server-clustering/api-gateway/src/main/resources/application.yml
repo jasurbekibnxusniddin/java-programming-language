@@ -1,6 +1,13 @@
 server:
   port: 8080
 
+grpc:
+  server:
+    port: 9090        # gRPC will run on port 9090
+    in-process-name: gateway-grpc
+    security:
+      enabled: false  # disable SSL for local testing
+
 spring:
   application:
     name: api-gateway

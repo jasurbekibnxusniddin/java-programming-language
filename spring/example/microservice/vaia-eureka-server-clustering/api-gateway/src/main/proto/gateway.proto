@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package com.example.api_gateway.grpc;
+
+option java_package = "com.example.api_gateway.grpc";
+option java_multiple_files = true;
+
+message GatewayRequest {
+    string name = 1;
+}
+
+message GatewayResponse {
+    string result = 1;
+}
+
+service GatewayService {
+    rpc sendRequest(GatewayRequest) returns (GatewayResponse);
+}
