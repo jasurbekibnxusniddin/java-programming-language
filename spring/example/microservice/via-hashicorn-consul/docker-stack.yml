@@ -1,0 +1,66 @@
+version: "3.9"
+
+networks:
+  micro-net:
+    driver: overlay
+
+services:
+
+  consul:
+    image: consul:latest
+    command: agent -server -bootstrap-expect=1 -ui -client=0.0.0.0
+    ports:
+      - "8500:8500"
+      - "8600:8600/udp"
+    networks:
+      - micro-net
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+
+  user-service:
+    image: user-service:latest
+    environment:
+      SPRING_APPLICATION_NAME: user-service
+      SPRING_CLOUD_CONSUL_HOST: consul
+      SPRING_CLOUD_CONSUL_PORT: 8500
+    networks:
+      - micro-net
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+    ports:
+      - "8081:8081"
+
+  order-service:
+    image: order-service:latest
+    environment:
+      SPRING_APPLICATION_NAME: order-service
+      SPRING_CLOUD_CONSUL_HOST: consul
+      SPRING_CLOUD_CONSUL_PORT: 8500
+    networks:
+      - micro-net
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+    ports:
+      - "8082:8082"
+
+  api-gateway:
+    image: api-gateway:latest
+    environment:
+      SPRING_APPLICATION_NAME: api-gateway
+      SPRING_CLOUD_CONSUL_HOST: consul
+      SPRING_CLOUD_CONSUL_PORT: 8500
+    networks:
+      - micro-net
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+    ports:
+      - "8080:8080"
