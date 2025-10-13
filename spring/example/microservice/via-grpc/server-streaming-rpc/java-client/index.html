@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Voice Stream</title>
+</head>
+<body>
+  <h2>🎙️ Live Voice Stream</h2>
+  <div id="output" style="font-family: monospace; white-space: pre-wrap;"></div>
+
+  <script>
+    const source = new EventSource("http://localhost:8080/grpc/stream/live");
+
+    // 👇 use 'voice-text' since your server sends event:voice-text
+    source.addEventListener("voice-text", (event) => {
+      const div = document.getElementById("output");
+      div.innerHTML += "• " + event.data + "\n";
+    });
+
+    source.onerror = (err) => {
+      console.error("SSE connection error:", err);
+    };
+  </script>
+</body>
+</html>

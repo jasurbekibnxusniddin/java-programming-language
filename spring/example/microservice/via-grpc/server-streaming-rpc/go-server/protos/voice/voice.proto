@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package voice;
+option go_package = "genproto/voice_proto;voice_proto";
+
+service VoiceStream {
+  rpc StreamText (VoiceRequest) returns (stream VoiceText);
+}
+
+message VoiceRequest {
+  string session_id = 1;
+}
+
+message VoiceText {
+  string text = 1;
+  int32 part = 2;
+}

@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package voice;
+
+option java_multiple_files = true;
+option java_package = "com.example.java_client.proto";
+option java_outer_classname = "VoiceProto";
+
+service VoiceStream {
+  rpc StreamText (VoiceRequest) returns (stream VoiceText);
+}
+
+message VoiceRequest {
+  string session_id = 1;
+}
+
+message VoiceText {
+  string text = 1;
+  int32 part = 2;
+}
