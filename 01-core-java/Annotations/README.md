@@ -165,3 +165,110 @@ public class Generation3List extends Generation2List {
 > ```
 
 ## Predefined Annotation Types
+A set of annotation types are predefined in the Java SE API. Some annotation types are used by the Java compiler, and some apply to other annotations.
+
+### Annotation Types Used by the Java Language
+The predefined annotation types defined in **java.lang** are *@Deprecated*, *@Override*, and *@SuppressWarnings*.
+
+**@Deprecated** @Deprecated annotation indicates that the marked element is deprecated and should no longer be used. The compiler generates a warning whenever a program uses a method, class, or field with the @Deprecated annotation. When an element is deprecated, it should also be documented using the Javadoc @deprecated tag, as shown in the following example. The use of the at sign (@) in both Javadoc comments and in annotations is not coincidental: they are related conceptually. Also, note that the Javadoc tag starts with a lowercase d and the annotation starts with an uppercase D.
+
+```java
+// Javadoc comment follows
+    /**
+     * @deprecated
+     * explanation of why it was deprecated
+     */
+    @Deprecated
+    static void deprecatedMethod() { }
+}
+```
+
+**@Override** @Override annotation informs the compiler that the element is meant to override an element declared in a superclass. Overriding methods will be discussed in Interfaces and Inheritance.
+
+```java
+   // mark method as a superclass method
+   // that has been overridden
+   @Override 
+   int overriddenMethod() { }
+```
+
+While it is not required to use this annotation when overriding a method, it helps to prevent errors. If a method marked with @Override fails to correctly override a method in one of its superclasses, the compiler generates an error.
+
+
+**@SuppressWarnings** @SuppressWarnings annotation tells the compiler to suppress specific warnings that it would otherwise generate. In the following example, a deprecated method is used, and the compiler usually generates a warning. In this case, however, the annotation causes the warning to be suppressed.
+
+```java
+// use a deprecated method and tell 
+   // compiler not to generate a warning
+   @SuppressWarnings("deprecation")
+    void useDeprecatedMethod() {
+        // deprecation warning
+        // - suppressed
+        objectOne.deprecatedMethod();
+    }
+```
+
+Every compiler warning belongs to a category. The Java Language Specification lists two categories: deprecation and unchecked. The unchecked warning can occur when interfacing with legacy code written before the advent of generics. To suppress multiple categories of warnings, use the following syntax:
+
+```java
+@SuppressWarnings({"unchecked", "deprecation"})
+```
+
+**@SafeVarargs** @SafeVarargs annotation, when applied to a method or constructor, asserts that the code does not perform potentially unsafe operations on its varargs parameter. When this annotation type is used, unchecked warnings relating to varargs usage are suppressed.
+
+**@FunctionalInterface** @FunctionalInterface annotation, introduced in Java SE 8, indicates that the type declaration is intended to be a functional interface, as defined by the Java Language Specification.
+
+
+### Annotations That Apply to Other Annotations
+Annotations that apply to other annotations are called meta-annotations. There are several meta-annotation types defined in java.lang.annotation.
+
+**@Retention** @Retention annotation specifies how the marked annotation is stored:
+1. RetentionPolicy.SOURCE – The marked annotation is retained only in the source level and is ignored by the compiler.
+1. RetentionPolicy.CLASS – The marked annotation is retained by the compiler at compile time, but is ignored by the Java Virtual Machine (JVM).
+1. RetentionPolicy.RUNTIME – The marked annotation is retained by the JVM so it can be used by the runtime environment.
+
+**@Documented** @Documented annotation indicates that whenever the specified annotation is used those elements should be documented using the Javadoc tool. (By default, annotations are not included in Javadoc.) For more information, see the Javadoc tools page.
+
+**@Target** @Target annotation marks another annotation to restrict what kind of Java elements the annotation can be applied to. A target annotation specifies one of the following element types as its value:
+1. ElementType.ANNOTATION_TYPE can be applied to an annotation type.
+1. ElementType.CONSTRUCTOR can be applied to a constructor.
+1. ElementType.FIELD can be applied to a field or property.
+1. ElementType.LOCAL_VARIABLE can be applied to a local variable.
+1. ElementType.METHOD can be applied to a method-level annotation.
+1. ElementType.PACKAGE can be applied to a package declaration.
+1. ElementType.PARAMETER can be applied to the parameters of a method.
+1. ElementType.TYPE can be applied to any element of a class.
+
+**@Inherited** @Inherited annotation indicates that the annotation type can be inherited from the super class. (This is not true by default.) When the user queries the annotation type and the class has no annotation for this type, the class' superclass is queried for the annotation type. This annotation applies only to class declarations.
+
+**@Repeatable** @Repeatable annotation, introduced in Java SE 8, indicates that the marked annotation can be applied more than once to the same declaration or type use. For more information, see Repeating Annotations.
+
+## Type Annotations and Pluggable Type Systems
+Before the Java SE 8 release, annotations could only be applied to declarations. As of the Java SE 8 release, annotations can also be applied to any type use. This means that annotations can be used anywhere you use a type. A few examples of where types are used are class instance creation expressions (new), casts, implements clauses, and throws clauses. This form of annotation is called a type annotation and several examples are provided in Annotations Basics.
+
+Type annotations were created to support improved analysis of Java programs way of ensuring stronger type checking. The Java SE 8 release does not provide a type checking framework, but it allows you to write (or download) a type checking framework that is implemented as one or more pluggable modules that are used in conjunction with the Java compiler.
+
+For example, you want to ensure that a particular variable in your program is never assigned to null; you want to avoid triggering a NullPointerException. You can write a custom plug-in to check for this. You would then modify your code to annotate that particular variable, indicating that it is never assigned to null. The variable declaration might look like this:
+
+```java
+@NonNull String str;
+```
+
+When you compile the code, including the NonNull module at the command line, the compiler prints a warning if it detects a potential problem, allowing you to modify the code to avoid the error. After you correct the code to remove all warnings, this particular error will not occur when the program runs.
+
+You can use multiple type-checking modules where each module checks for a different kind of error. In this way, you can build on top of the Java type system, adding specific checks when and where you want them.
+
+With the judicious use of type annotations and the presence of pluggable type checkers, you can write code that is stronger and less prone to error.
+
+In many cases, you do not have to write your own type checking modules. There are third parties who have done the work for you. For example, you might want to take advantage of the Checker Framework created by the University of Washington. This framework includes a NonNull module, as well as a regular expression module, and a mutex lock module. For more information, see the Checker Framework.
+
+## Repeating Annotations
+There are some situations where you want to apply the same annotation to a declaration or type use. As of the Java SE 8 release, repeating annotations enable you to do this.
+
+For example, you are writing code to use a timer service that enables you to run a method at a given time or on a certain schedule, similar to the UNIX cron service. Now you want to set a timer to run a method, doPeriodicCleanup, on the last day of the month and on every Friday at 11:00 p.m. To set the timer to run, create an @Schedule annotation and apply it twice to the doPeriodicCleanup method. The first use specifies the last day of the month and the second specifies Friday at 11p.m., as shown in the following code example:
+
+```java
+@Schedule(dayOfMonth="last")
+@Schedule(dayOfWeek="Fri", hour="23")
+public void doPeriodicCleanup() { ... }
+```
