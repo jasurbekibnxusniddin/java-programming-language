@@ -24,6 +24,8 @@ public class UserService {
         }
 
         User user = in.toEntity();
+        user.password = io.quarkus.elytron.security.common.BcryptUtil.bcryptHash(in.password());
+        user.role = "user";
         userRepository.persist(user);
         return toResponse(user);
     }

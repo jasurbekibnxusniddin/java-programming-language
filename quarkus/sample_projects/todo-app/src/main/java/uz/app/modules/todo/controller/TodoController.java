@@ -15,6 +15,7 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
+import io.quarkus.security.Authenticated;
 import uz.app.modules.todo.dto.TodoDto;
 import uz.app.modules.todo.service.TodoService;
 
@@ -22,6 +23,7 @@ import uz.app.modules.todo.service.TodoService;
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @Tag(name = "Todo", description = "Todo operations")
+@Authenticated
 public class TodoController {
 
     @Inject

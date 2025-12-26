@@ -20,14 +20,18 @@ public class TodoResourceTest {
     UserRepository userRepository;
 
     Long userId;
+    String userEmail;
+    String userPassword = "password";
 
     @BeforeEach
     @Transactional
     public void setup() {
-        // Clean up or ensure unique user
+        userEmail = "test_" + System.currentTimeMillis() + "@example.com";
         User user = new User();
         user.name = "Test User";
-        user.email = "test_" + System.currentTimeMillis() + "@example.com";
+        user.email = userEmail;
+        user.password = io.quarkus.elytron.security.common.BcryptUtil.bcryptHash(userPassword);
+        user.role = "user";
         userRepository.persist(user);
         userId = user.id;
     }
@@ -38,6 +42,7 @@ public class TodoResourceTest {
 
         // CREATE
         Number id = given()
+            .auth().preemptive().basic(userEmail, userPassword)
             .contentType("application/json")
             .body(createDto)
             .when()
@@ -51,14 +56,16 @@ public class TodoResourceTest {
 
         // READ (List)
         given()
+            .auth().preemptive().basic(userEmail, userPassword)
             .when()
             .get("/todos")
             .then()
             .statusCode(200);
-            // .body("$.size()", is(1)); // Skipping size check as other tests/seeds might affect it
+            // .body("$.size()", is(1)); 
 
         // READ (Get)
         given()
+            .auth().preemptive().basic(userEmail, userPassword)
             .when()
             .get("/todos/" + todoId)
             .then()
@@ -68,6 +75,7 @@ public class TodoResourceTest {
         // UPDATE
         TodoDto.create updateDto = new TodoDto.create("Updated Todo", "Updated Description", userId);
         given()
+            .auth().preemptive().basic(userEmail, userPassword)
             .contentType("application/json")
             .body(updateDto)
             .when()
@@ -78,6 +86,7 @@ public class TodoResourceTest {
 
         // DELETE
         given()
+            .auth().preemptive().basic(userEmail, userPassword)
             .when()
             .delete("/todos/" + todoId)
             .then()
@@ -85,6 +94,7 @@ public class TodoResourceTest {
 
         // Verify Delete
         given()
+            .auth().preemptive().basic(userEmail, userPassword)
             .when()
             .get("/todos/" + todoId)
             .then()

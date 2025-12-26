@@ -30,6 +30,14 @@ public class User extends PanacheEntity {
     @Column(nullable = false, length = 150, unique = true)
     public String email;
 
+    @NotBlank
+    @Column(nullable = false)
+    public String password;
+
+    @NotBlank
+    @Column(nullable = false)
+    public String role;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     public LocalDateTime createdAt;
 

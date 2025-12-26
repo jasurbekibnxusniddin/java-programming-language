@@ -1,6 +1,8 @@
 quarkus:
     http:
         port: 8080
+        auth:
+            basic: true
 
     dev-ui:
         enabled: false
@@ -14,6 +16,20 @@ quarkus:
 
     hibernate-orm:
         database:
-            generation: update
+            generation: drop-and-create
         log:
             sql: true
+
+    security:
+        jdbc:
+            enabled: true
+            principal-query:
+                sql: "SELECT password, role FROM users WHERE email = ?"
+                clear-password-mapper:
+                    enabled: false
+                bcrypt-password-mapper:
+                    enabled: true
+                    password-index: 1
+                    hash-encoding: hex
+                attribute-mapping:
+                    role: 2

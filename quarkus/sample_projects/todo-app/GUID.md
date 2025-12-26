@@ -85,3 +85,47 @@ If you don't have the CLI, use the Maven wrapper included in the project:
 ```
 
 This command automatically finds the correct version and adds it to your `pom.xml`.
+
+## 5. Security Implementation Guide
+
+This project implements standard **JDBC-based Authentication** using `quarkus-elytron-security-jdbc`.
+
+### Step 1: Add Dependency
+We added the Elytron JDBC extension to `pom.xml`:
+```xml
+<dependency>
+    <groupId>io.quarkus</groupId>
+    <artifactId>quarkus-elytron-security-jdbc</artifactId>
+</dependency>
+```
+
+### Step 2: Update User Entity
+We modified `User.java` to include credentials.
+- Added `password` field (stores Bcrypt hash).
+- Added `role` field (defines authority, default "user").
+
+### Step 3: Configure Security Realm
+We configured the `jdbc` realm in `application.yml` to tell Quarkus how to find users and verify passwords.
+
+```yaml
+security:
+    jdbc:
+        enabled: true
+        principal-query:
+            # Query to fetch password and role by email
+            sql: "SELECT password, role FROM users WHERE email = ?"
+            bcrypt-password-mapper:
+                enabled: true
+                password-index: 1 # 1st column in SELECT
+            attribute-mapping:
+                role: 2           # 2nd column in SELECT
+```
+
+### Step 4: Secure Business Logic
+- **Hashing**: Updated `UserService.create()` to hash passwords using `BcryptUtil.bcryptHash(password)` before saving.
+- **Access Control**:
+    - Annotating Controllers or Methods with `@Authenticated` ensures only logged-in users can access them.
+    - Annotating with `@PermitAll` allows public access (e.g., for registration).
+
+### Step 5: Testing
+Unit tests in `UserResourceTest` were updated to use `given().auth().preemptive().basic(email, password)` to simulate logged-in requests.

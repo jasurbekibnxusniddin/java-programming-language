@@ -15,6 +15,8 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
+import io.quarkus.security.Authenticated;
+import jakarta.annotation.security.PermitAll;
 import uz.app.modules.user.dto.UserDto;
 import uz.app.modules.user.service.UserService;
 
@@ -22,6 +24,7 @@ import uz.app.modules.user.service.UserService;
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @Tag(name = "User", description = "User operations")
+@Authenticated
 public class UserController {
 
     @Inject
@@ -29,6 +32,7 @@ public class UserController {
 
     @POST
     @Path("/create")
+    @PermitAll
     public Response create(UserDto.create payload) {
         UserDto.response created = userService.create(payload);
         return Response.created(URI.create("/users/" + created.id())).entity(created).build();
