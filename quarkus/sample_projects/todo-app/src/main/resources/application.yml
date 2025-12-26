@@ -1,4 +1,10 @@
 quarkus:
+    http:
+        port: 8080
+
+    dev-ui:
+        enabled: false
+
     datasource:
         db-kind: postgresql
         username: postgres
@@ -11,6 +17,3 @@ quarkus:
             generation: update
         log:
             sql: true
-
-    http:
-        port: 8000
