@@ -1,4 +1,4 @@
-package uz.app.modules.common.exception;
+package uz.app.common.exception;
 
 import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.core.Response;

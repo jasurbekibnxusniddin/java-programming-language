@@ -1,15 +1,14 @@
-package uz.app.modules.common.exception;
+package uz.app.common.exception;
 
-import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.ExceptionMapper;
 import jakarta.ws.rs.ext.Provider;
 
 @Provider
-public class BadRequestExceptionMapper implements ExceptionMapper<BadRequestException> {
+public class IllegalArgumentExceptionMapper implements ExceptionMapper<IllegalArgumentException> {
 
     @Override
-    public Response toResponse(BadRequestException exception) {
+    public Response toResponse(IllegalArgumentException exception) {
         return Response.status(Response.Status.BAD_REQUEST)
                 .entity(new ErrorResponse(
                         Response.Status.BAD_REQUEST.getStatusCode(),

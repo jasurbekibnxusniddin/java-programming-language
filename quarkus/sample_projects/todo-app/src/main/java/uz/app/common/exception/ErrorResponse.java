@@ -1,4 +1,4 @@
-package uz.app.modules.common.exception;
+package uz.app.common.exception;
 
 import java.time.LocalDateTime;
 

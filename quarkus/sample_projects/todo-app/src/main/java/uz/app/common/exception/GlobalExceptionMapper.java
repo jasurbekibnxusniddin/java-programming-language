@@ -1,9 +1,10 @@
-package uz.app.modules.common.exception;
+package uz.app.common.exception;
+
+import org.jboss.logging.Logger;
 
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.ExceptionMapper;
 import jakarta.ws.rs.ext.Provider;
-import org.jboss.logging.Logger;
 
 @Provider
 public class GlobalExceptionMapper implements ExceptionMapper<Throwable> {

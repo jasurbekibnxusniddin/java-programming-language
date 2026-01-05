@@ -42,21 +42,20 @@ public class TodoResourceTest {
 
         // CREATE
         Number id = given()
-            .auth().preemptive().basic(userEmail, userPassword)
             .contentType("application/json")
             .body(createDto)
             .when()
             .post("/todos/create")
             .then()
             .statusCode(201)
-            .body("id", notNullValue())
-            .extract().path("id");
+            .statusCode(201)
+            .body("data.id", notNullValue())
+            .extract().path("data.id");
 
         Long todoId = id.longValue();
 
         // READ (List)
         given()
-            .auth().preemptive().basic(userEmail, userPassword)
             .when()
             .get("/todos")
             .then()
@@ -65,39 +64,95 @@ public class TodoResourceTest {
 
         // READ (Get)
         given()
-            .auth().preemptive().basic(userEmail, userPassword)
             .when()
             .get("/todos/" + todoId)
             .then()
             .statusCode(200)
-            .body("title", is("Test Todo"));
+            .statusCode(200)
+            .body("data.title", is("Test Todo"));
 
         // UPDATE
         TodoDto.create updateDto = new TodoDto.create("Updated Todo", "Updated Description", userId);
         given()
-            .auth().preemptive().basic(userEmail, userPassword)
             .contentType("application/json")
             .body(updateDto)
             .when()
             .put("/todos/" + todoId)
             .then()
             .statusCode(200)
-            .body("title", is("Updated Todo"));
+            .statusCode(200)
+            .body("data.title", is("Updated Todo"));
 
         // DELETE
         given()
-            .auth().preemptive().basic(userEmail, userPassword)
             .when()
             .delete("/todos/" + todoId)
             .then()
-            .statusCode(204);
+            .statusCode(200);
 
         // Verify Delete
         given()
-            .auth().preemptive().basic(userEmail, userPassword)
             .when()
             .get("/todos/" + todoId)
             .then()
             .statusCode(404);
+    }
+
+    @Test
+    public void testTodoFiltering() {
+        // Create another user
+        User otherUser = new User();
+        otherUser.name = "Other User";
+        otherUser.email = "other_" + System.currentTimeMillis() + "@example.com";
+        otherUser.role = "user";
+        // existing user is already persisted in setup
+        
+        // We need transactional context to persist, but tests are not transactional by default unless annotated.
+        // The setup is transactional. Let's do this in the test body or rely on helper.
+        // Actually, let's just use the existing user (userId) and maybe create another one via repo if needed.
+        // But for simplicity, let's just rely on the existing user and create some todos.
+        
+        // We can create todos via API to ensure they are created properly
+        
+        TodoDto.create todo1 = new TodoDto.create("Todo 1", "Desc 1", userId);
+        TodoDto.create todo2 = new TodoDto.create("Todo 2", "Desc 2", userId);
+        
+        given().contentType("application/json").body(todo1).when().post("/todos/create").then().statusCode(201);
+        given().contentType("application/json").body(todo2).when().post("/todos/create").then().statusCode(201);
+        
+        // Filter by userId
+        given()
+            .queryParam("userId", userId)
+            .when()
+            .get("/todos")
+            .then()
+            .statusCode(200)
+            .body("data.size()", org.hamcrest.Matchers.greaterThanOrEqualTo(2));
+            
+        // Filter by non-existent userId
+        given()
+            .queryParam("userId", 999999)
+            .when()
+            .get("/todos")
+            .then()
+            .statusCode(200)
+            .body("data.size()", is(0));
+            
+        // Filter by completed status (default is false)
+        given()
+            .queryParam("completed", false)
+            .when()
+            .get("/todos")
+            .then()
+            .statusCode(200)
+            .body("data.size()", org.hamcrest.Matchers.greaterThanOrEqualTo(2));
+            
+        given()
+            .queryParam("completed", true)
+            .when()
+            .get("/todos")
+            .then()
+            .statusCode(200)
+            .body("data.size()", is(0));
     }
 }

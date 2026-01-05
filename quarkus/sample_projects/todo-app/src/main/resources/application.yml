@@ -1,8 +1,7 @@
 quarkus:
     http:
         port: 8080
-        auth:
-            basic: true
+
 
     dev-ui:
         enabled: false
@@ -16,20 +15,22 @@ quarkus:
 
     hibernate-orm:
         database:
-            generation: drop-and-create
+            generation: update
         log:
             sql: true
 
-    security:
-        jdbc:
-            enabled: true
-            principal-query:
-                sql: "SELECT password, role FROM users WHERE email = ?"
-                clear-password-mapper:
-                    enabled: false
-                bcrypt-password-mapper:
-                    enabled: true
-                    password-index: 1
-                    hash-encoding: hex
-                attribute-mapping:
-                    role: 2
+
+mp:
+  jwt:
+    verify:
+      publickey:
+        location: publicKey.pem
+      issuer: http://myapp.example.com  # Change to your app's issuer, e.g., https://yourdomain.com
+
+smallrye:
+  jwt:
+    expire:
+      in: 3600  # Token expires in 1 hour (3600 seconds) – adjust as needed
+    sign:
+      key:
+        location: privateKey.pem
