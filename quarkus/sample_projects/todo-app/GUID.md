@@ -70,7 +70,7 @@ You can add new extensions (dependencies) easily using the Quarkus CLI or Maven 
 
 ### Using Quarkus CLI
 If you have the Quarkus CLI installed:
-v```bash
+```bash
 quarkus extension add <extension-name>
 # Example:
 quarkus extension add hibernate-validator

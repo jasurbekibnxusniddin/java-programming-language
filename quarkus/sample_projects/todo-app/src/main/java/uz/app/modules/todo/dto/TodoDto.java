@@ -13,14 +13,6 @@ public class TodoDto {
 
     }
 
-    public record Criteria(
-            Long userId,
-            Boolean completed,
-            java.time.LocalDateTime from,
-            java.time.LocalDateTime to
-            ) {
-    }
-
     public record create(
             String title,
             String description,
@@ -36,5 +28,14 @@ public class TodoDto {
 
             return todo;
         }
+    }
+
+    public record Criteria(
+            Long userId,
+            Boolean completed,
+            java.time.LocalDateTime from,
+            java.time.LocalDateTime to
+            ) {
+
     }
 }
